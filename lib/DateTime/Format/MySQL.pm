@@ -4,29 +4,80 @@ use strict;
 
 use vars qw ($VERSION);
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 use DateTime;
+use DateTime::Format::Builder;
+
+DateTime::Format::Builder->create_class
+    ( parsers =>
+      { parse_date =>
+        { params => [ qw( year month day ) ],
+          regex  => qr/^(\d{1,4})-(\d\d)-(\d\d)$/,
+        },
+
+        parse_datetime =>
+        { params => [ qw( year month day hour minute second ) ],
+          regex  => qr/^(\d{1,4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/,
+        },
+
+        parse_timestamp =>
+        [ { length => 14,
+            params => [ qw( year month day hour minute second ) ],
+            regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
+            extra  => { time_zone => 'floating' },
+          },
+          { length => 12,
+            params => [ qw( year month day hour minute second ) ],
+            regex  => qr/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
+            extra  => { time_zone => 'floating' },
+            postprocess => \&_fix_2_digit_year,
+          },
+          { length => 10,
+            params => [ qw( year month day hour minute ) ],
+            regex  => qr/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
+            extra  => { time_zone => 'floating' },
+            postprocess => \&_fix_2_digit_year,
+          },
+          { length => 8,
+            params => [ qw( year month day ) ],
+            regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)$/,
+            extra  => { time_zone => 'floating' },
+          },
+          { length => 6,
+            params => [ qw( year month day ) ],
+            regex  => qr/^(\d\d)(\d\d)(\d\d)$/,
+            extra  => { time_zone => 'floating' },
+            postprocess => \&_fix_2_digit_year,
+          },
+          { length => 4,
+            params => [ qw( year month ) ],
+            regex  => qr/^(\d\d)(\d\d)$/,
+            extra  => { time_zone => 'floating' },
+            postprocess => \&_fix_2_digit_year,
+          },
+          { length => 2,
+            params => [ qw( year ) ],
+            regex  => qr/^(\d\d)$/,
+            extra  => { time_zone => 'floating' },
+            postprocess => \&_fix_2_digit_year,
+          },
+        ],
+      },
+    );
+
+sub _fix_2_digit_year
+{
+    my %p = @_;
+
+    $p{parsed}{year} += $p{parsed}{year} <= 69 ? 2000 : 1900;
+}
 
 sub new
 {
     my $class = shift;
 
     return bless {}, $class;
-}
-
-sub parse_date
-{
-    my ( $self, $date ) = @_;
-
-    $date =~ /^(\d\d\d\d)-(\d\d)-(\d\d)$/
-        or die "Invalid MySQL date: $date\n";
-
-    return DateTime->new( year  => $1,
-                          month => $2,
-                          day   => $3,
-                          time_zone => 'floating',
-                        );
 }
 
 sub parse_datetime
@@ -42,68 +93,6 @@ sub parse_datetime
                           hour   => $4,
                           minute => $5,
                           second => $6,
-                          time_zone => 'floating',
-                        );
-}
-
-
-my %valid_formats =
-    ( 14 =>
-      { params => [ qw( year month day hour minute second ) ],
-        regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
-      },
-      12 =>
-      { params => [ qw( year month day hour minute second ) ],
-        regex  => qr/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
-      },
-      10 =>
-      { params => [ qw( year month day hour minute ) ],
-        regex  => qr/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
-      },
-      8 =>
-      { params => [ qw( year month day ) ],
-        regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)$/,
-      },
-      6 =>
-      { params => [ qw( year month day ) ],
-        regex  => qr/^(\d\d)(\d\d)(\d\d)$/,
-      },
-      4 =>
-      { params => [ qw( year month ) ],
-        regex  => qr/^(\d\d)(\d\d)$/,
-      },
-      2 =>
-      { params => [ qw( year ) ],
-        regex  => qr/^(\d\d)$/,
-      },
-    );
-
-sub parse_timestamp
-{
-    my ( $self, $ts ) = @_;
-
-    my $length = length $ts;
-
-    my $format = $valid_formats{$length}
-	or die "Invalid MySQL timestamp: $ts\n";
-
-    my %p;
-    @p{ @{ $format->{params} } } = $ts =~ /$format->{regex}/;
-
-    if ( $length != 14 &&
-	 $length != 8 )
-    {
-	if ( substr( $ts, 0, 2 ) <= 69 )
-	{
-	    $p{year} = "20$p{year}";
-	}
-	else
-	{
-	    $p{year} = "19$p{year}";
-	}
-    }
-
-    return DateTime->new( %p,
                           time_zone => 'floating',
                         );
 }
