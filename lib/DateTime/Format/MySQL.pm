@@ -147,6 +147,8 @@ If given an improperly formatted string, this method may die.
 Given a C<DateTime> object, this methods returns an appropriately
 formatted string.
 
+=back
+
 =head1 SUPPORT
 
 Support for this module is provided via the datetime@perl.org email
