@@ -1,5 +1,7 @@
 0.02  2003-04-01
 
+- Switch to Module::Build for installation.
+
 - Switch to using DateTime::Format::Builder internally.
 
 0.01  2003-03-19
