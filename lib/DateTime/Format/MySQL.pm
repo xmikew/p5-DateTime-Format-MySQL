@@ -134,7 +134,9 @@ zone, because MySQL does not provide time zone information.
 =item * parse_timestamp($string)
 
 Given a value of the appropriate type, this method will return a new
-C<DateTime> object.
+C<DateTime> object.  The time zone for this object will always be the
+floating time zone, because by MySQL stores the local datetime, not
+UTC.
 
 If given an improperly formatted string, this method may die.
 
