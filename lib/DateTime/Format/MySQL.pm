@@ -7,9 +7,7 @@ use vars qw ($VERSION);
 $VERSION = '0.02';
 
 use DateTime;
-use DateTime::Format::Builder;
-
-DateTime::Format::Builder->create_class
+use DateTime::Format::Builder
     ( parsers =>
       { parse_date =>
         { params => [ qw( year month day ) ],
@@ -19,6 +17,7 @@ DateTime::Format::Builder->create_class
         parse_datetime =>
         { params => [ qw( year month day hour minute second ) ],
           regex  => qr/^(\d{1,4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/,
+          extra  => { time_zone => 'floating' },
         },
 
         parse_timestamp =>
@@ -71,30 +70,6 @@ sub _fix_2_digit_year
     my %p = @_;
 
     $p{parsed}{year} += $p{parsed}{year} <= 69 ? 2000 : 1900;
-}
-
-sub new
-{
-    my $class = shift;
-
-    return bless {}, $class;
-}
-
-sub parse_datetime
-{
-    my ( $self, $date ) = @_;
-
-    $date =~ /^(\d+)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/
-        or die "Invalid MySQL date: $date\n";
-
-    return DateTime->new( year   => $1,
-                          month  => $2,
-                          day    => $3,
-                          hour   => $4,
-                          minute => $5,
-                          second => $6,
-                          time_zone => 'floating',
-                        );
 }
 
 sub format_date

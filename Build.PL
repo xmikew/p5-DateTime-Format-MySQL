@@ -6,6 +6,6 @@ Module::Build->new
       license      => 'perl',
 
       requires     => { 'DateTime' => 0,
-                        'DateTime::Format::Builder' => 0.25,
+                        'DateTime::Format::Builder' => 0.60,
                       },
     )->create_build_script;
