@@ -1,5 +1,5 @@
-This module handles formatting and parsing of iCal format datetimes
-and durations, per RFC 2445.
+This module handles formatting and parsing of MySQL date and time
+related data types.
 
 INSTALLATION
 
