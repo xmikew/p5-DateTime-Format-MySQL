@@ -1,3 +1,7 @@
+0.03  2003-04-22
+
+- Internals cleanup by Iain Truskett.
+
 0.02  2003-04-01
 
 - Switch to Module::Build for installation.
