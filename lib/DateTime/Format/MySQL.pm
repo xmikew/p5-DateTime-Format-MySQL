@@ -26,6 +26,11 @@ use DateTime::Format::Builder
             regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
             extra  => { time_zone => 'floating' },
           },
+          {
+            params => [ qw( year month day hour minute second ) ],
+            regex  => qr/^(\d{1,4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/,
+            extra  => { time_zone => 'floating'},
+          },
           { length => 12,
             params => [ qw( year month day hour minute second ) ],
             regex  => qr/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
