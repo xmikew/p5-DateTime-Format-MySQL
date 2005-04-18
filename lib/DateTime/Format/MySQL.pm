@@ -4,7 +4,7 @@ use strict;
 
 use vars qw ($VERSION);
 
-$VERSION = '0.0301';
+$VERSION = '0.04';
 
 use DateTime;
 use DateTime::Format::Builder
