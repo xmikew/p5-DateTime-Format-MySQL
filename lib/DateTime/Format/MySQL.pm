@@ -4,31 +4,47 @@ use strict;
 
 use vars qw ($VERSION);
 
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 use DateTime;
 use DateTime::Format::Builder
     ( parsers =>
       { parse_date =>
         { params => [ qw( year month day ) ],
-          regex  => qr/^(\d{1,4})-(\d\d)-(\d\d)$/,
+          regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
         },
 
         parse_datetime =>
-        { params => [ qw( year month day hour minute second ) ],
-          regex  => qr/^(\d{1,4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/,
-          extra  => { time_zone => 'floating' },
-        },
+        [ { params => [ qw( year month day hour minute second ) ],
+            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
+            extra  => { time_zone => 'floating' },
+          },
+          { params => [ qw( year month day hour minute second microsecond ) ],
+            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct::](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
+            extra  => { time_zone => 'floating' },
+            postprocess => \&_convert_micro_to_nanosecs,
+          },
+        ],
 
         parse_timestamp =>
-        [ { length => 14,
+        [ { params => [ qw( year month day hour minute second microsecond ) ],
+            regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)\.(\d{1,6})$/,
+            extra  => { time_zone => 'floating' },
+            postprocess => \&_convert_micro_to_nanosecs,
+          },
+          { params => [ qw( year month day hour minute second microsecond ) ],
+            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
+            extra  => { time_zone => 'floating' },
+            postprocess => \&_convert_micro_to_nanosecs,
+          },
+          { length => 14,
             params => [ qw( year month day hour minute second ) ],
             regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
             extra  => { time_zone => 'floating' },
           },
           {
             params => [ qw( year month day hour minute second ) ],
-            regex  => qr/^(\d{1,4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/,
+            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
             extra  => { time_zone => 'floating'},
           },
           { length => 12,
@@ -97,6 +113,19 @@ sub format_datetime
 
     return $self->format_date($dt) . ' ' . $self->format_time($dt);
 }
+
+# DateTime constructor only has nanosecond. MySQL provides micro
+sub _convert_micro_to_nanosecs
+{
+  my %p = @_;
+  my $micro_secs = delete $p{parsed}{microsecond};
+
+  # right pad with zeros
+  $micro_secs .= '0' x (6 - length($micro_secs));
+  $p{parsed}{nanosecond} = $micro_secs * 1000; 
+  return 1; # parse successful
+}
+
 
 
 1;
@@ -167,7 +196,7 @@ Dave Rolsky <autarch@urth.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003 David Rolsky.  All rights reserved.  This program
+Copyright (c) 2003-2014 David Rolsky.  All rights reserved.  This program
 is free software; you can redistribute it and/or modify it under the
 same terms as Perl itself.
 

@@ -1,3 +1,12 @@
+
+0.05    2014-10-26
+
+- Added parsing of MySQL fractional seconds (microseconds).
+- Allowed additional valid MySQL formats (delimiters in DATE and TIME
+  fields using punctuation, 'T' separator between DATE and TIME and
+  single-digit time or date values).
+
+
 0.04    2005-05-17
 
 - Added parsing for TIMESTAMP as returned by MySQL 4.1.  Patch by Mike
