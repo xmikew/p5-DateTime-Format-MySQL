@@ -122,7 +122,8 @@ sub _convert_micro_to_nanosecs
 
   # right pad with zeros
   $micro_secs .= '0' x (6 - length($micro_secs));
-  $p{parsed}{nanosecond} = $micro_secs * 1000;
+  $p{parsed}{nanosecond} = $micro_secs * 1000; 
+  return 1; # parse successful
 }
 
 
