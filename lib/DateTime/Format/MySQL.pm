@@ -11,16 +11,16 @@ use DateTime::Format::Builder
     ( parsers =>
       { parse_date =>
         { params => [ qw( year month day ) ],
-          regex  => qr/^(\d{2,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
+          regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
         },
 
         parse_datetime =>
         [ { params => [ qw( year month day hour minute second ) ],
-            regex  => qr/^(\d{2,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
+            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
             extra  => { time_zone => 'floating' },
           },
           { params => [ qw( year month day hour minute second microsecond ) ],
-            regex  => qr/^(\d{2,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct::](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
+            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct::](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
             extra  => { time_zone => 'floating' },
             postprocess => \&_convert_micro_to_nanosecs,
           },
@@ -33,7 +33,7 @@ use DateTime::Format::Builder
             postprocess => \&_convert_micro_to_nanosecs,
           },
           { params => [ qw( year month day hour minute second microsecond ) ],
-            regex  => qr/^(\d{2,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
+            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
             extra  => { time_zone => 'floating' },
             postprocess => \&_convert_micro_to_nanosecs,
           },
@@ -44,7 +44,7 @@ use DateTime::Format::Builder
           },
           {
             params => [ qw( year month day hour minute second ) ],
-            regex  => qr/^(\d{2,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
+            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
             extra  => { time_zone => 'floating'},
           },
           { length => 12,
