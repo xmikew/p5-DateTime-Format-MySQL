@@ -1,4 +1,8 @@
 
+0.06    2016-02-12
+
+- Fixed typo in regex that strangely works most of the time
+
 0.05    2014-10-26
 
 - Added parsing of MySQL fractional seconds (microseconds).

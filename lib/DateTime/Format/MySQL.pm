@@ -4,7 +4,7 @@ use strict;
 
 use vars qw ($VERSION);
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 use DateTime;
 use DateTime::Format::Builder
@@ -20,7 +20,7 @@ use DateTime::Format::Builder
             extra  => { time_zone => 'floating' },
           },
           { params => [ qw( year month day hour minute second microsecond ) ],
-            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct::](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
+            regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
             extra  => { time_zone => 'floating' },
             postprocess => \&_convert_micro_to_nanosecs,
           },
