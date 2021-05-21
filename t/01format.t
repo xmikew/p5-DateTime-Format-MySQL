@@ -12,7 +12,6 @@ my $dt = DateTime->new( year   => 2000,
                         hour   => 15,
                         minute => 23,
                         second => 44,
-                        nanosecond => 0,
                         time_zone => 'UTC',
                       );
 
@@ -33,14 +32,14 @@ my $dt_hires = DateTime->new( year   => 2000,
                       );
 
 {
-    is( $mysql->format_time($dt_hires), '15:23:44.123456', 'format_time hires');
+    is( $mysql->format_time($dt_hires), '15:23:44.123456', 'format_time hires keeps micros');
 
     $dt_hires->set(nanosecond => 123_456_789);
-    is( $mysql->format_time($dt_hires), '15:23:44.123456', 'format_time hires');
+    is( $mysql->format_time($dt_hires), '15:23:44.123456', 'format_time hires truncates nanos');
 
     $dt_hires->set(nanosecond => 1);
-    is( $mysql->format_time($dt_hires), '15:23:44', 'format_time hires');
+    is( $mysql->format_time($dt_hires), '15:23:44', 'format_time hires drops nanos < 1 micro');
 
     $dt_hires->set(nanosecond => 500_000_000);
-    is( $mysql->format_time($dt_hires), '15:23:44.500000', 'format_time hires');
+    is( $mysql->format_time($dt_hires), '15:23:44.500000', 'format_time hires keeps 6 digit precision');
 }
