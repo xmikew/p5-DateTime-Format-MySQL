@@ -7,9 +7,7 @@ use vars qw ($VERSION);
 $VERSION = '0.07-TRIAL';
 
 use DateTime;
-use DateTime::Format::Builder
-    ( parsers =>
-      { parse_date =>
+use DateTime::Format::Builder ( parsers => { parse_date =>
         { params => [ qw( year month day ) ],
           regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
         },
@@ -17,47 +15,45 @@ use DateTime::Format::Builder
         parse_datetime =>
         [ { params => [ qw( year month day hour minute second ) ],
             regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
-            extra  => { time_zone => 'floating' },
+            postprocess => \&_set_time_zone
           },
           { params => [ qw( year month day hour minute second microsecond ) ],
             regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
-            extra  => { time_zone => 'floating' },
-            postprocess => \&_convert_micro_to_nanosecs,
+            postprocess => [\&_convert_micro_to_nanosecs, \&_set_time_zone]
           },
         ],
 
         parse_timestamp =>
         [ { params => [ qw( year month day hour minute second microsecond ) ],
             regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)\.(\d{1,6})$/,
-            extra  => { time_zone => 'floating' },
-            postprocess => \&_convert_micro_to_nanosecs,
+            postprocess => [\&_convert_micro_to_nanosecs, \&_set_time_zone]
           },
           { params => [ qw( year month day hour minute second microsecond ) ],
             regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})\.(\d{1,6})/,
-            extra  => { time_zone => 'floating' },
-            postprocess => \&_convert_micro_to_nanosecs,
+            postprocess => [\&_convert_micro_to_nanosecs, \&_set_time_zone]
           },
           { length => 14,
             params => [ qw( year month day hour minute second ) ],
             regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
-            extra  => { time_zone => 'floating' },
+            postprocess => \&_set_time_zone,
           },
           {
             params => [ qw( year month day hour minute second ) ],
             regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})[\sT](\d{1,2})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
             extra  => { time_zone => 'floating'},
+            postprocess => \&_set_time_zone,
           },
           { length => 12,
             params => [ qw( year month day hour minute second ) ],
             regex  => qr/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
             extra  => { time_zone => 'floating' },
-            postprocess => \&_fix_2_digit_year,
+            postprocess => [\&_fix_2_digit_year, \&_set_time_zone]
           },
           { length => 10,
             params => [ qw( year month day hour minute ) ],
             regex  => qr/^(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,
             extra  => { time_zone => 'floating' },
-            postprocess => \&_fix_2_digit_year,
+            postprocess => [\&_fix_2_digit_year, \&_set_time_zone]
           },
           { length => 8,
             params => [ qw( year month day ) ],
@@ -126,7 +122,21 @@ sub _convert_micro_to_nanosecs
   return 1; # parse successful
 }
 
-
+# Accept an optional timezone to parsers
+sub _set_time_zone
+{
+  my %p = @_;
+  if (!defined $p{args}) {
+    $p{parsed}{time_zone} = 'floating';
+    return 1;
+  }
+  my %args = @{$p{args}};
+  if ( $args{'time_zone'} ) {
+    $DB::single=1;
+    $p{parsed}{time_zone} = $args{'time_zone'};
+  }
+  return 1;
+}
 
 1;
 

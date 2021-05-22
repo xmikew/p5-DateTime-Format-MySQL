@@ -1,6 +1,6 @@
 use strict;
 
-use Test::More tests => 84;
+use Test::More tests => 86;
 
 use DateTime::Format::MySQL;
 
@@ -36,7 +36,7 @@ my $mysql = 'DateTime::Format::MySQL';
 }
 
 {
-    my $dt = $mysql->parse_datetime( '2014:10:26 01:02:03.002' );
+    my $dt = $mysql->parse_datetime( '2014:10:26 01:02:03.002', time_zone => 'UTC' );
     is( $dt->year, 2014 );
     is( $dt->month, 10 );
     is( $dt->day_of_month, 26 );
@@ -45,6 +45,7 @@ my $mysql = 'DateTime::Format::MySQL';
     is( $dt->second, 03 );
     is( $dt->microsecond, 2_000 );
     is( $dt->nanosecond, 2_000_000 );
+    is( $dt->time_zone->name, 'UTC');
 } 
 
 {
@@ -57,6 +58,7 @@ my $mysql = 'DateTime::Format::MySQL';
     is( $dt->second, 8 );
     is( $dt->microsecond, 0 );
     is( $dt->nanosecond, 0 );
+    is( $dt->time_zone->name, 'floating' );
 }
 
 {
