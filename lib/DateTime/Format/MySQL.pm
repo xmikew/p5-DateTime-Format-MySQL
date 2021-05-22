@@ -132,7 +132,6 @@ sub _set_time_zone
   }
   my %args = @{$p{args}};
   if ( $args{'time_zone'} ) {
-    $DB::single=1;
     $p{parsed}{time_zone} = $args{'time_zone'};
   }
   return 1;

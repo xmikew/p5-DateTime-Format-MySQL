@@ -2,10 +2,13 @@
 
 - if microseconds are set on provided DateTime object to time_format,
   use them. Fixes RT #136549
+- accept optional time_zone to parse methods. Implements RT #95526
+
 
 0.06    2016-02-12
 
 - Fixed typo in regex that strangely works most of the time
+
 
 0.05    2014-10-26
 
