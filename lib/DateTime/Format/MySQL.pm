@@ -4,10 +4,12 @@ use strict;
 
 use vars qw ($VERSION);
 
-$VERSION = '0.07-TRIAL';
+$VERSION = '0.07-TRIAL2';
 
 use DateTime;
-use DateTime::Format::Builder ( parsers => { parse_date =>
+use DateTime::Format::Builder
+    ( parsers =>
+      { parse_date =>
         { params => [ qw( year month day ) ],
           regex  => qr/^(\d{1,4})[[:punct:]](\d{1,2})[[:punct:]](\d{1,2})$/,
         },
