@@ -1,6 +1,6 @@
 use strict;
 
-use Test::More tests => 11;
+use Test::More tests => 12;
 
 use DateTime::Format::MySQL;
 
@@ -63,6 +63,9 @@ $dt_hires = DateTime->new( year   => 2000,
 
     $dt_hires->set(nanosecond => 1);
     is( $mysql->format_time($dt_hires), '15:23:44', 'format_time hires drops nanos < 1 micro');
+
+    $dt_hires->set(nanosecond => 1_000);
+    is( $mysql->format_time($dt_hires), '15:23:44.000001', 'format_time hires ok with 1 micro');
 
     $dt_hires->set(nanosecond => 500_000_000);
     is( $mysql->format_time($dt_hires), '15:23:44.500000', 'format_time hires keeps 6 digit precision');

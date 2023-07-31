@@ -5,3 +5,5 @@ CVS
 ~$
 ^MANIFEST\.SKIP$
 ^Makefile$
+^MYMETA\.yml$
+^MYMETA\.json$
