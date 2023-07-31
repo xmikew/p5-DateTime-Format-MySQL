@@ -4,7 +4,7 @@ use strict;
 
 use vars qw ($VERSION);
 
-$VERSION = '0.0701';
+$VERSION = '0.08';
 
 use DateTime;
 use DateTime::Format::Builder
@@ -104,7 +104,7 @@ sub format_time
 {
     my ( $self, $dt ) = @_;
 
-    return $dt->microsecond ? join('.', $dt->hms(':'), $dt->microsecond) : $dt->hms(':');
+    return $dt->microsecond ? join('.', $dt->hms(':'), sprintf("%06d", $dt->microsecond)) : $dt->hms(':');
 }
 
 sub format_datetime
