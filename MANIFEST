@@ -9,3 +9,4 @@ README
 t/00load.t
 t/01format.t
 t/02parse.t
+META.json
